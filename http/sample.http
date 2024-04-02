@@ -1,0 +1,29 @@
+### Update
+PATCH http://{{host}}/sample/2
+Content-Type: application/json
+
+{
+  "value": 51
+}
+
+### Create sample
+POST http://{{host}}/sample
+Content-Type: application/json
+
+{
+  "key": "key1",
+  "value": 50
+}
+
+### Delete by id
+DELETE http://{{host}}/sample/2
+
+### Find by id
+GET http://{{host}}/sample/2
+
+### FindAll sample
+GET http://{{host}}/sample
+
+### Health Check
+GET http://{{host}}/health
+

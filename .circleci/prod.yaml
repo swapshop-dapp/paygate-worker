@@ -1,0 +1,12 @@
+ingress:
+  apigwEnable: true
+envFrom:
+  secrets:
+    - name: paygate-service-secret
+    - name: encrypt-secret
+    - name: common-secret
+    - name: db-secret
+    - name: paygate-secret
+    - name: stripe-secret
+healthCheck:
+  enable: true

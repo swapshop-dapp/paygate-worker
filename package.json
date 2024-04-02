@@ -1,0 +1,115 @@
+{
+  "name": "@goswapshop/paygate-worker",
+  "version": "0.0.1",
+  "description": "",
+  "author": {
+    "email": "phamanhtan@proton.me",
+    "name": "Pham Anh Tan",
+    "url": "https://github.com/ngankilo"
+  },
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/src/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "db": "node node_modules/.bin/prisma",
+    "start:stripe-migrate": "node dist/src/migration/migrate.app"
+  },
+  "dependencies": {
+    "@nestjs/axios": "^0.0.6",
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^1.2.0",
+    "@nestjs/core": "^8.0.0",
+    "@nestjs/event-emitter": "^1.1.0",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/passport": "^8.2.1",
+    "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/schedule": "^1.1.0",
+    "@nestjs/swagger": "^5.2.0",
+    "@nestjs/terminus": "^8.0.4",
+    "@nestjs/throttler": "^2.0.1",
+    "@prisma/client": "^4.4.0",
+    "aws-sdk": "^2.1138.0",
+    "axios": "^0.26.1",
+    "big.js": "^6.1.1",
+    "class-transformer": "^0.5.1",
+    "kafkajs": "^2.2.1",
+    "reflect-metadata": "^0.1.13",
+    "stripe": "^11.6.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^8.0.0",
+    "@nestjs/schematics": "^8.0.0",
+    "@nestjs/testing": "^8.0.0",
+    "@types/big.js": "^6.1.3",
+    "@types/cron": "^1.7.3",
+    "@types/express": "^4.17.13",
+    "@types/jest": "27.4.0",
+    "@types/node": "^16.0.0",
+    "@types/supertest": "^2.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^26.1.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.2.5",
+    "prettier": "^2.3.2",
+    "prisma": "^3.11.1",
+    "source-map-support": "^0.5.20",
+    "supertest": "^6.1.3",
+    "ts-jest": "^27.0.3",
+    "ts-loader": "^9.2.3",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.10.1",
+    "typescript": "^4.3.5"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": ".",
+    "testRegex": ".*\\.(e2e-)?spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.(t|j)s",
+      "!src/main.(t|j)s"
+    ],
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "coverageThreshold": {
+      "global": {
+        "statements": 0,
+        "branches": 0,
+        "lines": 0
+      }
+    },
+    "coveragePathIgnorePatterns": [
+      "src/common/",
+      "dist/",
+      "node_modules/"
+    ],
+    "testPathIgnorePatterns": [
+      "src/common/",
+      "dist/",
+      "node_modules/"
+    ]
+  }
+}

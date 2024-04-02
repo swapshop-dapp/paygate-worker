@@ -1,0 +1,233 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model StripeConnect {
+  id                   String   @id @default(uuid()) @db.Uuid
+  userId               String   @map("user_id") @db.VarChar(100)
+  status               Boolean?
+  tokenType            String?  @map("token_type") @db.VarChar(10)
+  stripePublishableKey String?  @map("stripe_publishable_key") @db.VarChar(255)
+  scope                String?  @db.VarChar(20)
+  liveMode             Boolean?
+  stripeUserId         String   @map("stripe_user_id") @db.VarChar(100)
+  refreshToken         String?  @map("refresh_token") @db.VarChar(255)
+  accessToken          String?  @map("access_token") @db.VarChar(255)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
+  walletId             String?  @map("wallet_id") @db.VarChar(255)
+  reason               Json?    @map("reason") @db.Json
+  partnerId            String?  @map("partner_id") @db.VarChar(100)
+  country              String?  @db.VarChar(5)
+
+  @@map("stripe_connect")
+}
+
+model StripeConnectAuthorizationCode {
+  id                String   @id @default(uuid()) @db.Uuid
+  userId            String   @map("user_id") @db.VarChar(100)
+  authorizationCode String   @map("authorization_code") @db.VarChar(100)
+  status            String   @db.VarChar(20)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+  walletId          String?  @map("wallet_id") @db.VarChar(255)
+
+  @@map("stripe_connect_authorization_code")
+}
+
+model PaymentMethod {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.VarChar(100)
+  name       String?  @db.VarChar(50)
+  key        String?  @db.VarChar(50)
+  type       String?  @db.VarChar(20)
+  status     Boolean? @default(true)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  walletId   String?  @map("wallet_id") @db.VarChar(255)
+  currency   String?  @db.VarChar(20)
+  icon       String?  @db.VarChar(255)
+  order      Int?
+  changeable Boolean? @default(false)
+  partnerId  String?  @map("partner_id") @db.VarChar(100)
+
+  @@unique([userId, key])
+  @@map("payment_method")
+}
+
+model Transaction {
+  id               String   @id @default(uuid()) @db.Uuid
+  amount           Decimal  @db.Decimal(19, 8)
+  currency         String   @db.VarChar(5)
+  type             String   @db.VarChar(20)
+  externalTxId     String?  @map("external_tx_id") @db.VarChar(255)
+  gateway          String   @db.VarChar(20)
+  status           String   @db.VarChar(50)
+  metadata         Json?    @db.Json
+  externalMetadata Json?    @map("external_metadata") @db.Json
+  description      String?  @db.VarChar(255)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+  bookingId        String?  @map("booking_id") @db.VarChar(255)
+  guestId          String?  @map("guest_id") @db.VarChar(100)
+  guestWallet      String?  @map("guest_wallet") @db.VarChar(255)
+  hostId           String?  @map("host_id") @db.VarChar(100)
+  hostWallet       String?  @map("host_wallet") @db.VarChar(255)
+  propertyId       String?  @map("property_id") @db.VarChar(255)
+  net              Decimal? @db.Decimal(19, 8)
+  refundAmount     Decimal? @default(0) @map("refund_amount") @db.Decimal(19, 8)
+  platformFee      Decimal? @map("platform_fee") @db.Decimal(19, 8)
+  applicationFee   Decimal? @default(0) @map("application_fee") @db.Decimal(19, 8)
+  customerId       String?  @map("customer_id") @db.VarChar(100)
+  failureCode      String?  @map("failure_code") @db.VarChar(50)
+  failureMessage   String?  @map("failure_message") @db.VarChar(500)
+
+  @@index([bookingId])
+  @@index([gateway])
+  @@index([type])
+  @@index([status])
+  @@index([externalTxId, bookingId, hostWallet, hostId, gateway])
+  @@map("transaction")
+}
+
+model WebhookLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  metadata  Json?    @db.Json
+  type      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  account   String?  @db.VarChar(255)
+
+  @@map("webhook_log")
+}
+
+model Currency {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  key        String   @db.VarChar(20)
+  symbol     String   @db.VarChar(100)
+  type       String   @db.VarChar(10)
+  source     String   @db.VarChar(100)
+  rate       Decimal  @default(0) @db.Decimal(19, 8)
+  visibility Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  order      Int
+  display    Boolean  @default(false)
+
+  @@unique([key])
+  @@index([symbol, name, type, key, visibility])
+  @@map("currency")
+}
+
+model Heartbeat {
+  id Int      @id
+  ts DateTime @default(now()) @map("ts")
+
+  @@map("heartbeat")
+}
+
+model SupportedPayment {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  key         String   @db.VarChar(20)
+  //  symbol      String?   @db.VarChar(100)
+  type        String?  @db.VarChar(10)
+  visibility  Boolean  @default(true)
+  changeable  Boolean  @default(false)
+  description String?  @db.VarChar(100)
+  currency    String?  @db.VarChar(20)
+  icon        String?  @db.VarChar(255)
+  order       Int      @default(autoincrement())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("supported_payment")
+}
+
+model Customers {
+  id         Int      @id @default(autoincrement())
+  guestEmail String?  @map("guest_email") @db.VarChar(100)
+  customerId String?  @map("customer_id") @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([guestEmail])
+  @@map("customers")
+}
+
+model HostCustomers {
+  id             Int      @id @default(autoincrement())
+  guestEmail     String   @map("guest_email") @db.VarChar(100)
+  hostId         String   @map("host_id") @db.VarChar(100)
+  hostWallet     String?  @map("host_wallet") @db.VarChar(100)
+  customerId     String   @map("customer_id") @db.VarChar(255)
+  hostCustomerId String?  @map("host_customer_id") @db.VarChar(255)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([guestEmail, hostId, hostWallet])
+  @@map("host_customers")
+}
+
+model StripeAccount {
+  id         Int      @id @default(autoincrement())
+  account    String   @db.VarChar(100)
+  partnerId  String   @map("partner_id") @db.VarChar(100)
+  expiredAt  Int      @map("expired_at")
+  url        String   @db.VarChar(500)
+  returnUrl  String   @map("return_url") @db.VarChar(500)
+  refreshUrl String   @map("refresh_url") @db.VarChar(500)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  status     String?  @default("DISCONNECTED")
+
+  @@map("stripe_account")
+}
+
+model StripeFeeOptions {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  isGuestPayFee Boolean  @default(true) @map("is_guest_pay_fee")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId])
+  @@map("stripe_fee_options")
+}
+
+model FraudBlocked {
+  id        Int      @id @default(autoincrement())
+  customer  String   @db.VarChar(50)
+  listingId Int      @map("listing_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  expiredAt DateTime @default(now()) @map("expired_at")
+
+  @@index([customer, listingId, expiredAt])
+  @@map("fraud_blocked")
+}
+
+model PaypalConnect {
+  id                    String   @id @default(uuid()) @db.Uuid
+  userId                String   @map("user_id") @db.VarChar(100)
+  status                Boolean?
+  merchantId            String   @map("merchant_id") @db.VarChar(100)
+  trackingId            String?  @map("tracking_id") @db.VarChar(255)
+  paymentReceivable     Boolean? @map("payments_receivable")
+  primaryEmailConfirmed Boolean  @map("primary_email_confirmed")
+  oAuthIntegrations     Json?    @map("oauth_integrations")
+  walletId              String?  @map("wallet_id") @db.VarChar(255)
+  reason                Json?    @map("reason") @db.Json
+  partnerId             String?  @map("partner_id") @db.VarChar(100)
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("paypal_connect")
+}

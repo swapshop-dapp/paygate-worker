@@ -1,0 +1,26 @@
+# Usage
+Use build-in exception instead of define new exception
+
+### List build-in exceptions:
+```
+BadRequestException
+UnauthorizedException
+NotFoundException
+ForbiddenException
+NotAcceptableException
+RequestTimeoutException
+ConflictException
+GoneException
+HttpVersionNotSupportedException
+PayloadTooLargeException
+UnsupportedMediaTypeException
+UnprocessableEntityException
+InternalServerErrorException
+NotImplementedException
+ImATeapotException
+MethodNotAllowedException
+BadGatewayException
+ServiceUnavailableException
+GatewayTimeoutException
+PreconditionFailedException
+```
